@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/navbar"
 import { Hero } from "@/components/hero"
-import { TweetsShowcase } from "@/components/tweets-showcase"
 import { ToolsShowcase } from "@/components/tools-showcase"
 import { PhotoGallery } from "@/components/photo-gallery"
 import { Footer } from "@/components/footer"
@@ -13,19 +12,24 @@ export default function Home() {
       <Navbar />
 
       <main className="flex-1">
-        <Hero
-          name="苏格"
-          bio="软件开发者 | 开源爱好者 | 用代码构建未来"
-          avatarUrl="/avatar.jpg"
-          socialLinks={{
-            github: githubUsername ? `https://github.com/${githubUsername}` : undefined,
-            twitter: "https://twitter.com/KurtHopp8",
-            email: "yc_zzh@qq.com",
-          }}
-        />
-        <TweetsShowcase />
-        <ToolsShowcase username={githubUsername} limit={6} />
-        <PhotoGallery />
+        <div id="hero">
+          <Hero
+            name="苏格"
+            bio="软件开发者 | 开源爱好者 | 用代码构建未来"
+            avatarUrl="/avatar.jpg"
+            socialLinks={{
+              github: githubUsername ? `https://github.com/${githubUsername}` : undefined,
+              twitter: "https://twitter.com/aidotcom",
+              email: "yc_zzh@qq.com",
+            }}
+          />
+        </div>
+        <div id="projects">
+          <ToolsShowcase username={githubUsername} limit={6} />
+        </div>
+        <div id="photos">
+          <PhotoGallery />
+        </div>
       </main>
 
       <Footer
