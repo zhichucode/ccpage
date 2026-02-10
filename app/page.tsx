@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { Hero } from "@/components/hero"
 import { ToolsShowcase } from "@/components/tools-showcase"
+import { PhotoGallery } from "@/components/photo-gallery"
 import { Footer } from "@/components/footer"
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
           }}
         />
         <ToolsShowcase username={githubUsername} limit={6} />
+        <PhotoGallery />
       </main>
 
       <Footer

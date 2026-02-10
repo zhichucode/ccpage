@@ -17,7 +17,13 @@ export const metadata: Metadata = {
   title: "苏格 - 个人主页",
   description: "个人主页，展示项目与工具",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png" },
+    ],
   },
 }
 

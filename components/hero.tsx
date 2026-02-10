@@ -32,7 +32,7 @@ export function Hero({
   return (
     <section className="flex flex-col items-center text-center space-y-6 py-12 px-4">
       <Avatar className="w-32 h-32 ring-4 ring-primary/20">
-        <AvatarImage src={avatarUrl} alt={name} />
+        <AvatarImage src={avatarUrl} alt={name} className="object-cover" />
         <AvatarFallback className="text-3xl font-bold bg-primary text-primary-foreground">
           {initials}
         </AvatarFallback>
