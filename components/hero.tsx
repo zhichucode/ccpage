@@ -17,8 +17,8 @@ interface HeroProps {
 }
 
 export function Hero({
-  name = "Your Name",
-  bio = "Software Developer | Open Source Enthusiast | Building the future one commit at a time",
+  name = "苏格",
+  bio = "软件开发者 | 开源爱好者 | 用代码构建未来",
   avatarUrl,
   socialLinks = {},
 }: HeroProps) {

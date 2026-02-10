@@ -62,7 +62,7 @@ export function ToolsShowcase({ username, limit = 6 }: ToolsShowcaseProps) {
   if (loading) {
     return (
       <section className="py-12 px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">My Projects</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">我的项目</h2>
         <div className="flex justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -73,9 +73,9 @@ export function ToolsShowcase({ username, limit = 6 }: ToolsShowcaseProps) {
   if (error) {
     return (
       <section className="py-12 px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">My Projects</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">我的项目</h2>
         <div className="text-center text-muted-foreground">
-          <p>Unable to load projects. Please check back later.</p>
+          <p>无法加载项目，请稍后再试。</p>
         </div>
       </section>
     )
@@ -84,9 +84,9 @@ export function ToolsShowcase({ username, limit = 6 }: ToolsShowcaseProps) {
   if (repos.length === 0) {
     return (
       <section className="py-12 px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">My Projects</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">我的项目</h2>
         <div className="text-center text-muted-foreground">
-          <p>No projects found.</p>
+          <p>暂无项目。</p>
         </div>
       </section>
     )
@@ -94,7 +94,7 @@ export function ToolsShowcase({ username, limit = 6 }: ToolsShowcaseProps) {
 
   return (
     <section className="py-12 px-4">
-      <h2 className="text-3xl font-bold text-center mb-8">My Projects</h2>
+      <h2 className="text-3xl font-bold text-center mb-8">我的项目</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {repos.map((repo) => (
           <Card
@@ -118,7 +118,7 @@ export function ToolsShowcase({ username, limit = 6 }: ToolsShowcaseProps) {
                     href={repo.homepage}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="View live site"
+                    aria-label="查看在线演示"
                     className="shrink-0"
                   >
                     <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
@@ -126,7 +126,7 @@ export function ToolsShowcase({ username, limit = 6 }: ToolsShowcaseProps) {
                 )}
               </div>
               <CardDescription className="line-clamp-2 min-h-[2.5rem]">
-                {repo.description || "No description available."}
+                {repo.description || "暂无描述"}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-end">

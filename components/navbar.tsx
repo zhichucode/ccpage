@@ -4,7 +4,7 @@ interface NavbarProps {
   siteName?: string
 }
 
-export function Navbar({ siteName = "zhichucode" }: NavbarProps) {
+export function Navbar({ siteName = "苏格" }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-6xl mx-auto flex h-14 items-center justify-between px-4">
