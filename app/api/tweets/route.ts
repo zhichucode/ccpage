@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server"
-import { TwitterApi } from "twitter-api-v2"
 
 export async function GET() {
   try {
     const apiKey = process.env.TWITTER_API_KEY
     const apiSecret = process.env.TWITTER_API_SECRET
-    const accessToken = process.env.TWITTER_ACCESS_TOKEN
-    const accessTokenSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET
     const username = process.env.TWITTER_USERNAME
 
-    if (!apiKey || !apiSecret || !accessToken || !accessTokenSecret || !username) {
+    if (!apiKey || !apiSecret || !username) {
       console.error("Missing Twitter API credentials")
       return NextResponse.json(
         { error: "Twitter API credentials not configured" },
@@ -17,34 +14,82 @@ export async function GET() {
       )
     }
 
-    // 使用 TwitterApi 客户端进行 OAuth 1.0a 用户上下文认���
-    const client = new TwitterApi({
-      appKey: apiKey,
-      appSecret: apiSecret,
-      accessToken: accessToken,
-      accessSecret: accessTokenSecret,
+    // 生成 Bearer Token (Base64 encoded API key:secret)
+    const bearerToken = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64')
+
+    // 首先获取 Bearer Token
+    const tokenResponse = await fetch('https://api.twitter.com/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${bearerToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
     })
+
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text()
+      console.error("Failed to get bearer token:", errorText)
+      return NextResponse.json(
+        { error: "Failed to authenticate with Twitter", details: errorText },
+        { status: 401 }
+      )
+    }
+
+    const tokenData = await tokenResponse.json()
+    const accessToken = tokenData.access_token
 
     console.log("Fetching user data for:", username)
 
     // 获取用户信息
-    const user = await client.v2.userByUsername(username, {
-      "user.fields": ["profile_image_url"],
-    })
+    const userResponse = await fetch(
+      `https://api.twitter.com/2/users/by/username/${username}?user.fields=profile_image_url`,
+      {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+        },
+      }
+    )
 
-    console.log("User found:", user.data.id)
+    if (!userResponse.ok) {
+      const errorText = await userResponse.text()
+      console.error("Failed to fetch user:", errorText)
+      return NextResponse.json(
+        { error: "Failed to fetch user data", details: errorText },
+        { status: userResponse.status }
+      )
+    }
 
-    // 获取用户的推文（最新3条，排除转发和回复）
-    const timeline = await client.v2.userTimeline(user.data.id, {
-      max_results: 3,
-      "tweet.fields": ["created_at", "public_metrics"],
-      exclude: ["retweets", "replies"],
-    })
+    const userData = await userResponse.json()
+    const userId = userData.data.id
 
-    console.log("Tweets fetched:", timeline.data.data?.length || 0)
+    console.log("User found:", userId)
+
+    // 获取用户的推文（最新3条）
+    const tweetsResponse = await fetch(
+      `https://api.twitter.com/2/users/${userId}/tweets?max_results=3&tweet.fields=created_at,public_metrics&exclude=retweets,replies`,
+      {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+        },
+      }
+    )
+
+    if (!tweetsResponse.ok) {
+      const errorText = await tweetsResponse.text()
+      console.error("Failed to fetch tweets:", errorText)
+      return NextResponse.json(
+        { error: "Failed to fetch tweets", details: errorText },
+        { status: tweetsResponse.status }
+      )
+    }
+
+    const tweetsData = await tweetsResponse.json()
+
+    console.log("Tweets fetched:", tweetsData.data?.length || 0)
 
     // 格式化返回数据
-    const tweets = timeline.data.data?.map((tweet: any) => ({
+    const tweets = tweetsData.data?.map((tweet: any) => ({
       id: tweet.id,
       text: tweet.text,
       createdAt: tweet.created_at,
@@ -55,7 +100,7 @@ export async function GET() {
     return NextResponse.json({
       user: {
         username,
-        profileImage: user.data.profile_image_url,
+        profileImage: userData.data.profile_image_url,
       },
       tweets,
     })
@@ -65,7 +110,6 @@ export async function GET() {
       {
         error: "Internal server error",
         details: error.message,
-        data: error.data,
       },
       { status: 500 }
     )
