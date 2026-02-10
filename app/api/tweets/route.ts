@@ -9,6 +9,7 @@ export async function GET() {
     const username = process.env.TWITTER_USERNAME
 
     if (!apiKey || !apiSecret || !accessToken || !accessTokenSecret || !username) {
+      console.error("Missing Twitter API credentials")
       return NextResponse.json(
         { error: "Twitter API credentials not configured" },
         { status: 500 }
@@ -17,6 +18,7 @@ export async function GET() {
 
     // 使用 Twitter API v2 获取用户推文
     // 首先获取用户 ID
+    console.log("Fetching user data for:", username)
     const userResponse = await fetch(
       `https://api.twitter.com/2/users/by/username/${username}?user.fields=profile_image_url`,
       {
@@ -26,18 +28,22 @@ export async function GET() {
       }
     )
 
+    const userResponseText = await userResponse.text()
+    console.log("User API response status:", userResponse.status)
+    console.log("User API response:", userResponseText)
+
     if (!userResponse.ok) {
-      console.error("Twitter API error:", await userResponse.text())
       return NextResponse.json(
-        { error: "Failed to fetch user data" },
+        { error: "Failed to fetch user data", details: userResponseText },
         { status: userResponse.status }
       )
     }
 
-    const userData = await userResponse.json()
+    const userData = JSON.parse(userResponseText)
     const userId = userData.data.id
 
     // 获取用户的时间线（最新3条推文）
+    console.log("Fetching tweets for user ID:", userId)
     const tweetsResponse = await fetch(
       `https://api.twitter.com/2/users/${userId}/tweets?max_results=3&tweet.fields=created_at,public_metrics&exclude=retweets,replies`,
       {
@@ -47,15 +53,18 @@ export async function GET() {
       }
     )
 
+    const tweetsResponseText = await tweetsResponse.text()
+    console.log("Tweets API response status:", tweetsResponse.status)
+    console.log("Tweets API response:", tweetsResponseText)
+
     if (!tweetsResponse.ok) {
-      console.error("Twitter API error:", await tweetsResponse.text())
       return NextResponse.json(
-        { error: "Failed to fetch tweets" },
+        { error: "Failed to fetch tweets", details: tweetsResponseText },
         { status: tweetsResponse.status }
       )
     }
 
-    const tweetsData = await tweetsResponse.json()
+    const tweetsData = JSON.parse(tweetsResponseText)
 
     // 格式化返回数据
     const tweets = tweetsData.data?.map((tweet: any) => ({
@@ -76,7 +85,10 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching tweets:", error)
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     )
   }
