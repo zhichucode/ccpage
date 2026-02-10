@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar"
 import { Hero } from "@/components/hero"
+import { TweetsShowcase } from "@/components/tweets-showcase"
 import { ToolsShowcase } from "@/components/tools-showcase"
 import { PhotoGallery } from "@/components/photo-gallery"
 import { Footer } from "@/components/footer"
@@ -18,8 +19,11 @@ export default function Home() {
           avatarUrl="/avatar.jpg"
           socialLinks={{
             github: githubUsername ? `https://github.com/${githubUsername}` : undefined,
+            twitter: "https://twitter.com/aidotcom",
+            email: "yc_zzh@qq.com",
           }}
         />
+        <TweetsShowcase />
         <ToolsShowcase username={githubUsername} limit={6} />
         <PhotoGallery />
       </main>
