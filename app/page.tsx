@@ -19,7 +19,7 @@ export default function Home() {
           avatarUrl="/avatar.jpg"
           socialLinks={{
             github: githubUsername ? `https://github.com/${githubUsername}` : undefined,
-            twitter: "https://twitter.com/aidotcom",
+            twitter: "https://twitter.com/KurtHopp8",
             email: "yc_zzh@qq.com",
           }}
         />
